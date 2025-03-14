@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+"""Security utilities."""
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, decode_token
 from datetime import timedelta
