@@ -1,4 +1,4 @@
--- Set a Database for the Jo seeker project
+-- Set a database for the Job seeker project
 -- Create user, database and grant privileges
 
 -- Create a Database job_dev_db if it does not exists
