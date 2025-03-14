@@ -1,13 +1,14 @@
-from job_platform.models.base_model import BaseModel
-from sqlalchemy import Column, String
+from job_platform.models.user import User
+from sqlalchemy import Column, String, ForeignKey
 
 
-class JobSeeker(BaseModel):
-    """User model for job seeker and providers"""
+class JobSeeker(User):
+    """User model for job seeker"""
     __tablename__ = "jobseekers"
 
-    first_name = Column(String(128), nullable=False)
-    last_name = Column(String(128), nullable=False)
-    email = db.Column(db.String(128), unique=True, nullable=False)
-    password = Column(String(128), nullable=False)
+    id = Column(ForeignKey("users.id"), primary_key=True)
     cv_link = Column(String(256), nullable=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'job_seeker',
+    }
