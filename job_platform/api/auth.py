@@ -16,7 +16,6 @@ storage.reload()
 def signupEmployer():
     """User signup method."""
     data = request.json
-    print(data)
 
     if not data:
         return jsonify({"error": "Data was not given"})
@@ -51,7 +50,6 @@ def signupEmployer():
 def signupJobSeeker():
     """User signup method."""
     data = request.json
-    print(data)
 
     if not data:
         return jsonify({"error": "Data was not given"})
