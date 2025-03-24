@@ -2,17 +2,20 @@
 """
 Handles the database storage for the Job Seeker project
 """
-from models.base_model import Base
-from models.employee import Employee
-from models.employer import Employer
-from models.job import Job
+from job_platform.models.base_model import Base
+from job_platform.models.blocked_token import BlockedToken
+from job_platform.models.job_seeker import JobSeeker
+from job_platform.models.employer import Employer
+from job_platform.models.user import User
+from job_platform.models.job import Job
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from os import getenv
 
 
 # Dictionary mapping model class names to actual classes
-classes = {'Employee': Employee, 'Employer': Employer, 'Job': Job}
+classes = {'JobSeeker': JobSeeker, 'Employer': Employer, 'Job': Job,
+           'User': User, 'BlockedToken': BlockedToken}
 
 # Database connection credentials from environment variables
 user = getenv('JOB_MYSQL_USER')

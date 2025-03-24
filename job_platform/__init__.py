@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -7,7 +9,7 @@ from job_platform.config import Config
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
-jwt = JWTManager()
+#jwt = JWTManager()
 
 
 def create_app():
@@ -15,6 +17,10 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     app.config.from_object(Config)
+    app.config["JWT_SECRET_KEY"] = "This_is_the_secret_key_for_my_flask_app"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 1200
+
+    jwt = JWTManager(app)
 
     db.init_app(app)
     bcrypt.init_app(app)
