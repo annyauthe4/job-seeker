@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script defer src="scripts/main.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Signup</h2>
+        <label for="userType">Select User Type:</label>
+        <select id="userType">
+            <option value="employer">Employer</option>
+            <option value="jobseeker">Job Seeker</option>
+        </select>
+    
+        <form id="signupForm">
+            <input type="text" id="full_name" placeholder="Full Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+        
+            <div id="extraFields"></div> <!-- Extra fields appear here based on selection -->
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <p>Already have an account? <a href="login.html">Login</a></p>
+    </div>
+</body>
+</html>
