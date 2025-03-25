@@ -1,49 +1,84 @@
-from flask import Blueprint, request, jsonify
-from job_platform.models.engine.db_storage import db
+from flask import Blueprint, request, jsonify, abort
+from job_platform.models.engine.db_storage import DBStorage
 from job_platform.models.user import User
 from job_platform.models.job_seeker import JobSeeker
 from job_platform.models.employer import Employer
 from job_platform.utils.security import hash_password, check_password
 from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from job_platform.models.blocked_token import BlockedToken
 
 auth_api = Blueprint('auth_api', __name__)
+storage = DBStorage()
+storage.reload()
 
-
-@auth_api.route('/signup', methods=['POST'])
-def signup():
+@auth_api.route('/signup/employer', methods=['POST'])
+def signupEmployer():
     """User signup method."""
     data = request.json
+    print(data)
 
-    # Validate required fields
-    required_fields = ['full_name', 'email', 'password', 'role']
+    if not data:
+        return jsonify({"error": "Data was not given"})
+     # Validate required fields
+    required_fields = ['full_name', 'email', 'password', 'company_name']
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing required fields"}), 400
 
     full_name = data.get('full_name')
     email = data.get('email')
     password = data.get('password')
-    role = data.get('role')
+    company_name = data.get('company_name')
+    website = data.get('website', '')
 
-    if User.query.filter_by(email=email).first():
-        return jsonify({"error": "Email already exists"}), 400
+    all_data = storage.all(User)
+    for items in all_data.values():
+        if email == items.to_dict().get('email'):
+            return jsonify({"error": "Email already exists"}), 400
+    # Create a new employer
+    employer = Employer(
+            full_name=full_name,
+            email=email,
+            password=hash_password(password),
+            company_name=company_name,
+            website=website
+            )
+    storage.new(employer)
+    storage.save()
+    return jsonify({"message": "Employer signed up!"}), 201
 
-    # Create user and hash password
-    user = User(full_name=full_name, email=email,
-                password=hash_password(password), role=role)
-    db.session.add(user)
-    db.session.commit()  # Ensure the user is saved first
+@auth_api.route('/signup/jobseeker', methods=['POST'])
+def signupJobSeeker():
+    """User signup method."""
+    data = request.json
+    print(data)
 
-    # Create related profile
-    if role == 'job_seeker':
-        job_seeker = JobSeeker(user_id=user.id)
-        db.session.add(job_seeker)
-    elif role == 'employer':
-        employer = Employer(user_id=user.id)
-        db.session.add(employer)
+    if not data:
+        return jsonify({"error": "Data was not given"})
+     # Validate required fields
+    required_fields = ['full_name', 'email', 'password']
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing required fields"}), 400
 
-    db.session.commit()
-    return jsonify({"message": "User registered successfully"}), 201
+    full_name = data.get('full_name')
+    email = data.get('email')
+    password = data.get('password')
+    cv_link = data.get('cv_link', '')
 
+    all_data = storage.all(User)
+    for items in all_data.values():
+        if email == items.to_dict().get('email'):
+            return jsonify({"error": "Email already exists"}), 400
+    # Create a new job_seeker
+    seeker = JobSeeker(
+            full_name=full_name,
+            email=email,
+            password=hash_password(password),
+            cv_link=cv_link
+            )
+    storage.new(seeker)
+    storage.save()
+    return jsonify({"message": "You are all signed up!"}), 201
 
 @auth_api.route('/login', methods=['POST'])
 def login():
@@ -58,8 +93,15 @@ def login():
     password = data.get('password')
 
     # Check if user exists
-    user = User.query.filter_by(email=email).first()
-    if not user or not check_password(password, user.password):
+    user = None
+
+    all_data = storage.all(User)
+    for items in all_data.values():
+        if email == items.email:
+            user = items
+            break
+    print(user)
+    if not user or not check_password(user.password, password):
         return jsonify({"error": "Invalid email or password"}), 401
 
     # Generate JWT access token
@@ -68,3 +110,14 @@ def login():
                                  "role": user.role})
 
     return jsonify({"access_token": access_token}), 200
+
+@auth_api.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    jti = get_jwt()['jti']
+    blocked_token = BlockedToken(id=jti)
+
+    storage.new(blocked_token)
+    storage.save()
+
+    return jsonify({"msg": "Successfully logged out."}), 200

@@ -1,26 +1,35 @@
 #!/usr/bin/python3
-from flask import Blueprint, request, jsonify
-from job_platform.models.engine.db_storage import db
+from flask import Blueprint, request, jsonify, abort
+from job_platform.models.engine.db_storage import DBStorage
 from job_platform.models.job import Job
 from job_platform.models.user import User
 from job_platform.models.job_seeker import JobSeeker
 from job_platform.models.employer import Employer
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from job_platform.models.blocked_token import BlockedToken
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 job_api = Blueprint('job_api', __name__)
+storage = DBStorage()
+storage.reload()
 
+def check_blacklist():
+    jti = get_jwt()['jti']
+    blacklist = storage.get(BlockedToken, jti)
+
+    if blacklist:
+        abort(401, description="Login token is expired")
 
 @job_api.route('/jobs', methods=['GET'])
 def get_jobs():
     """Retrieve all job listings."""
-    jobs = Job.query.all()
-    return jsonify([job.to_dict() for job in jobs]), 200
+    jobs = storage.all(Job)
+    return jsonify([job.to_dict() for job in jobs.values()]), 200
 
 
-@job_api.route('/jobs/<int:job_id>', methods=['GET'])
+@job_api.route('/jobs/<job_id>', methods=['GET'])
 def get_job(job_id):
     """Retrieve a single job by ID."""
-    job = Job.query.get(job_id)
+    job = storage.get(Job, job_id)
     if not job:
         return jsonify({"error": "Job not found"}), 404
     return jsonify(job.to_dict()), 200
@@ -30,8 +39,12 @@ def get_job(job_id):
 @jwt_required()
 def post_job():
     """Post a new job (Employer only."""
+
+    # Check if the user is not logged in
+    check_blacklist()
+
     user_identity = get_jwt_identity()
-    user = User.query.get(user_identity["id"])
+    user = storage.get(User, user_identity["id"])
 
     if not isinstance(user, Employer):
         return jsonify({"error":
@@ -53,40 +66,60 @@ def post_job():
         website_link=data.get('website_link', ''),
         employer_id=user.id
     )
-    db.session.add(new_job)
-    db.session.commit()
+    storage.new(new_job)
+    storage.save()
     return jsonify({"message": "Job created successfully",
                     "job": new_job.to_dict()}), 201
 
 
-@job_api.route('/jobs/<int:job_id>', methods=['PUT'])
+@job_api.route('/jobs/<job_id>', methods=['PUT'])
 @jwt_required()
 def update_job(job_id):
     """Update an existing job listing."""
-    job = Job.query.get(job_id)
+
+    # Check if the user is not logged in
+    check_blacklist()
+
+    user_identity = get_jwt_identity()
+    user = storage.get(User, user_identity["id"])
+    job = storage.get(Job, job_id)
+
     if not job:
         return jsonify({"error": "Job not found"}), 404
+
+    if user.id != job.employer_id:
+        return jsonify({"error": "No Authorization"}), 401
 
     data = request.json
     for key, value in data.items():
         if hasattr(job, key):
             setattr(job, key, value)
 
-    db.session.commit()
+    storage.save()
     return jsonify({"message": "Job updated successfully",
                     "job": job.to_dict()}), 200
 
 
-@job_api.route('/jobs/<int:job_id>', methods=['DELETE'])
+@job_api.route('/jobs/<job_id>', methods=['DELETE'])
 @jwt_required()
 def delete_job(job_id):
     """Delete a job listing."""
-    job = Job.query.get(job_id)
+
+    # Check if the user is logged in
+    check_blacklist()
+
+    user_identity = get_jwt_identity()
+    user = storage.get(User, user_identity["id"])
+    job = storage.get(Job, job_id)
+
     if not job:
         return jsonify({"error": "Job not found"}), 404
 
-    db.session.delete(job)
-    db.session.commit()
+    if user.id != job.employer_id:
+        return jsonify({"error": "No authorization"}), 401
+
+    storage.delete(job)
+    storage.save()
     return jsonify({"message": "Job deleted successfully"}), 200
 
 
@@ -95,7 +128,7 @@ def delete_job(job_id):
 def upload_cv():
     """Upload CV (Job Seeker only)."""
     user_identity = get_jwt_identity()
-    user = User.query.get(user_identity["id"])
+    user = storage.get(User, user_identity["id"])
 
     if not isinstance(user, JobSeeker):
         return jsonify({"error":
@@ -113,7 +146,7 @@ def upload_cv():
     cv_file.save(file_path)
 
     user.cv_link = file_path
-    db.session.commit()
+    storage.save()
 
     return jsonify({"message":
                     "CV uploaded successfully",

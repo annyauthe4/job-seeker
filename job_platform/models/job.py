@@ -17,7 +17,6 @@ class Job(BaseModel):
     company = Column(String(128), nullable=False)
     salary = Column(Integer, nullable=True)
     website_link = Column(String(256), nullable=True)
-    employer_id = Column(String(36),
-                         ForeignKey('employers.id'), nullable=False)
+    employer_id = Column(String(36), ForeignKey('employers.id'), nullable=False)
 
     employer = relationship('Employer', back_populates='jobs')
