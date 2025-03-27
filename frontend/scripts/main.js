@@ -64,6 +64,7 @@ $(document).ready(function() {
                 localStorage.setItem("access_token", response.access_token);
                 alert("Login successful!");
                 window.location.href = "dashboard.html";
+                $("#welcome-message").text(`Welcome, ${response.full_name}`);
             },
             error: function(xhr) {
                 alert(xhr.responseJSON.error);
@@ -88,5 +89,36 @@ $(document).ready(function() {
                 alert("Logout failed.");
             }
         });
+    });
+});
+
+
+
+ // Handle Job Posting
+ $("#jobForm").submit(function(e) {
+    e.preventDefault();
+
+    let jobData = {
+        job_title: $("#jobTitle").val(),
+        description: $("#jobDescription").val(),
+        salary: $("#salary").val(),
+        location: $("#location").val(),
+        company: $("#company").val(),
+        website_link: $("#website_link").val()
+    };
+
+    $.ajax({
+        url: "http://127.0.0.1:5000/api/job/jobs",
+        type: "POST",
+        contentType: "application/json",
+        headers: { "Authorization": "Bearer " + localStorage.getItem("access_token") },
+        data: JSON.stringify(jobData),
+        success: function(response) {
+            alert("Job posted successfully!");
+            $("#jobForm")[0].reset();  // Clear form fields
+        },
+        error: function(xhr) {
+            alert(xhr.responseJSON.error);
+        }
     });
 });
