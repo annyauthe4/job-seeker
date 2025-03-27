@@ -18,7 +18,7 @@ $(document).ready(function() {
         e.preventDefault();
         
         let userType = $("#userType").val();
-        let url = userType === "employer" ? "/api/signup/employer" : "/api/signup/jobseeker";
+        let url = userType === "employer" ? "http://127.0.0.1:5000/api/auth/signup/employer" : "http://127.0.0.1:5000/api/auth/signup/jobseeker";
         
         let userData = {
             full_name: $("#full_name").val(),
@@ -53,7 +53,7 @@ $(document).ready(function() {
         e.preventDefault();
         
         $.ajax({
-            url: "/api/login",
+            url: "http://127.0.0.1:5000/api/auth/login",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({
@@ -74,7 +74,7 @@ $(document).ready(function() {
     // Handle logout
     $("#logout").click(function() {
         $.ajax({
-            url: "/api/logout",
+            url: "http://127.0.0.1:5000/api/auth/logout",
             type: "POST",
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("access_token")
