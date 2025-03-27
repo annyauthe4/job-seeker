@@ -1,4 +1,9 @@
 $(document).ready(function() {
+    // Redirect to landing page on site load
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+        window.location.href = 'landing.html';
+    }
+
     // Handle user type selection
     $("#userType").change(function() {
         let userType = $(this).val();

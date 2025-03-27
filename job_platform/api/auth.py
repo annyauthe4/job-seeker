@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, abort, render_template
 from job_platform.models.engine.db_storage import DBStorage
 from job_platform.models.user import User
 from job_platform.models.job_seeker import JobSeeker
@@ -11,6 +11,11 @@ from job_platform.models.blocked_token import BlockedToken
 auth_api = Blueprint('auth_api', __name__)
 storage = DBStorage()
 storage.reload()
+
+@auth_api.route('/')
+def landing_page():
+    """Site landing page."""
+    return render_template('landing.html')
 
 @auth_api.route('/signup/employer', methods=['POST'])
 def signupEmployer():
