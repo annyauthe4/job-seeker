@@ -1,0 +1,33 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin-top: 160px;
+    background-color: rgb(183, 236, 183);
+}
+
+#job-listings{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 10px;
+    margin: 15px;
+}
+
+.job-card{
+    display: grid;
+    border: 1px solid rgb(108, 105, 105);
+    border-radius: 5px;
+    padding: 5px;
+    margin: 3px;
+}
+
+
+.apply-link{
+    align-self: end;
+    justify-self: center;
+}
+
+#logout{
+    width: 60%;
+}
