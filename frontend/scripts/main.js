@@ -68,7 +68,16 @@ $(document).ready(function() {
             success: function(response) {
                 localStorage.setItem("access_token", response.access_token);
                 alert("Login successful!");
-                window.location.href = "dashboard.html";
+
+                const tokenParts = response.access_token.split('.');
+                const payload = JSON.parse(atob(tokenParts[1])); // Decode the payload
+            
+                const role = payload.sub.role;
+                if (role === 'employer') {
+                  window.location.href = "employer_dashboard.html";
+                } else {
+                  window.location.href = "job_dashboard.html";
+                }
             },
             error: function(xhr) {
                 alert(xhr.responseJSON.error);
@@ -94,4 +103,66 @@ $(document).ready(function() {
             }
         });
     });
+});
+
+
+
+ // Handle Job Posting
+ $("#jobForm").submit(function(e) {
+    e.preventDefault();
+
+    let jobData = {
+        job_title: $("#jobTitle").val(),
+        description: $("#jobDescription").val(),
+        salary: $("#salary").val(),
+        location: $("#location").val(),
+        company: $("#company").val(),
+        website_link: $("#website_link").val()
+    };
+
+    $.ajax({
+        url: "http://127.0.0.1:5000/api/job/jobs",
+        type: "POST",
+        contentType: "application/json",
+        headers: { "Authorization": "Bearer " + localStorage.getItem("access_token") },
+        data: JSON.stringify(jobData),
+        success: function(response) {
+            alert("Job posted successfully!");
+            $("#jobForm")[0].reset();  // Clear form fields
+        },
+        error: function(xhr) {
+            alert(xhr.responseJSON.error);
+        }
+    });
+});
+
+// Fetch job listings
+$.ajax({
+    url: "http://127.0.0.1:5000/api/job/jobs",  // API endpoint to fetch all jobs
+    type: "GET",
+    success: function (jobs) {
+        let jobListings = $("#job-listings");
+        jobListings.empty();
+
+        if (jobs.length === 0) {
+            jobListings.append("<p>No jobs available at the moment.</p>");
+        } else {
+            jobs.forEach(job => {
+                let jobCard = `
+                    <div class="job-card">
+                        <h3>${job.job_title}</h3>
+                        <p><strong>Company:</strong> ${job.company}</p>
+                        <p><strong>Description:</strong> ${job.description}</p>
+                        <p><strong>Location:</strong> ${job.location}</p>
+                        <p><strong>Salary:</strong> ${job.salary}</p>
+                        <a href="${job.website_link}" class="apply-link"><button class="apply-button" data-job-id="${job.id}">Apply</button></a>
+                    </div>
+                `;
+                jobListings.append(jobCard);
+            });
+        }
+    },
+    error: function (xhr) {
+        alert(xhr.responseJSON.error);
+    }
 });

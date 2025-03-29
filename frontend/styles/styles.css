@@ -83,6 +83,10 @@ a:hover {
 .welcome-links a:hover {
     background-color: #0056b3;
 }
+
+#jobForm{
+    width: 80%;
+}
 @media (max-width: 480px) {
     .container {
         padding: 15px;
