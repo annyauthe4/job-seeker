@@ -72,7 +72,7 @@ nav {
 
 /* Hero Section */
 .hero {
-    background-image: url(/frontend/images/hunters-race-MYbhN8KaaEc-unsplash.jpg);
+    background-image: url("../images/hunters-race-MYbhN8KaaEc-unsplash.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
