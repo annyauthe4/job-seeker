@@ -96,7 +96,7 @@ $(document).ready(function() {
             success: function(response) {
                 localStorage.removeItem("access_token");
                 alert(response.msg);
-                window.location.href = "/index.html";
+                window.location.href = "index.html";
             },
             error: function(xhr) {
                 alert("Logout failed.");
