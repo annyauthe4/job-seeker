@@ -20,10 +20,9 @@ header {
 }
 
 nav {
+    text-align: left;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
 }
 
 .logo {
@@ -33,13 +32,15 @@ nav {
 }
 
 .nav-links {
-    list-style: none;
+    width: 100%;
+    height: 100%;
     display: flex;
-    gap: 20px;
+    list-style: none;
 }
 
 .nav-links li a {
     text-decoration: none;
+    padding-right: 20px;
     color: #ffffff;
     font-size: 1em;
     transition: color 0.3s ease-in-out;
@@ -51,6 +52,7 @@ nav {
 
 .btn {
     padding: 10px 20px;
+    margin-left: 20px;
     background: #f9a825;
     color: #000;
     border-radius: 5px;
@@ -70,6 +72,9 @@ nav {
 
 /* Hero Section */
 .hero {
+    background-image: url(/frontend/images/hunters-race-MYbhN8KaaEc-unsplash.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -107,6 +112,10 @@ nav {
 
 .cta-btn:hover {
     background: #ffcc33;
+}
+
+.signup-img{
+    width: 80%;
 }
 
 /* Content Sections */
