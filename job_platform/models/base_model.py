@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+""" This module contains the base class
+    for all classes
+"""
 from datetime import datetime
 from sqlalchemy.orm import declarative_base
 import uuid
@@ -5,7 +9,7 @@ from sqlalchemy import Column, String, DateTime
 
 time = "%Y-%m-%dT%H:%M:%S.%f"
 
-Base = declarative_base()
+Base = declarative_base()  # Base for all SQL tables
 
 
 class BaseModel(Base):

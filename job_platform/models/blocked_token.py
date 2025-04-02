@@ -2,7 +2,6 @@
 """
 Sets up a table for black listed tokens
 """
-
 from job_platform.models.base_model import BaseModel
 from sqlalchemy import Column, String, Integer, ForeignKey
 

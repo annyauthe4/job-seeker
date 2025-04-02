@@ -1,7 +1,13 @@
 # Job Platform
 
+![Alt text](images/job-seeker_homepage.png)
 ## Overview
 This project is a job platform that connects employers and job seekers. Employers can post job listings, and job seekers can browse available jobs and apply. The platform consists of a backend API built with Flask and a frontend built with HTML, CSS, and JavaScript (jQuery).
+
+### Authors
+- Salu Oluwafikunayomi <https://www.linkedin.com/in/oluwafikunayomisalu/>
+- Abiodun Alagbada <https://www.linkedin.com/in/abiodunalagbada/>
+- Ouwaseun Ayodele <https://www.linkedin.com/in/oluwaseun-otetumo-2b38291a5/>
 
 ## Features
 - User authentication (Signup/Login)
@@ -24,7 +30,7 @@ This project is a job platform that connects employers and job seekers. Employer
 - JavaScript (jQuery for AJAX requests)
 
 ### Database:
-- SQLite (or PostgreSQL/MySQL depending on configuration)
+- SQLAlchemy (MySQL)
 
 ## Installation
 ### Prerequisites
@@ -79,3 +85,19 @@ This project is a job platform that connects employers and job seekers. Employer
 ## Troubleshooting
 ### CORS Issues
 - Ensure CORS is properly configured in Flask (`flask_cors` installed and enabled).
+
+## Contributing ✍
+Thank you for your interest in contributing! However, we are currently not accepting contributions.  
+We will update this section once we open up for contributions. Stay tuned!
+
+## Related Projects  
+Here are some projects and tools related to this job board platform:  
+
+- [LinkedIn Jobs](https://www.linkedin.com/jobs/) - A professional network with job listings.  
+- [Indeed](https://www.indeed.com/) - A popular job search engine for job seekers.  
+- [Glassdoor](https://www.glassdoor.com/) - Provides job listings along with company reviews.  
+- [Job Board API](https://github.com/rdashinc/JobBoardAPI) - An open-source API for job postings.  
+- [Awesome Job Boards](https://github.com/infosec-jobs/awesome-job-boards) - A curated list of job board platforms for various industries.  
+
+## License
+This project is licensed under the [MIT License](LICENSE).

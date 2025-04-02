@@ -1,8 +1,4 @@
 $(document).ready(function() {
-    // Redirect to landing page on site load
-    /*if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-        window.location.href = 'landing.html';
-    }*/
 
     // Handle user type selection
     $("#userType").change(function() {
@@ -18,7 +14,7 @@ $(document).ready(function() {
         }
     });
 
-    // Handle signup
+    // Handle user's signup
     $("#signupForm").submit(function(e) {
         e.preventDefault();
         
@@ -60,7 +56,7 @@ $(document).ready(function() {
         });
     });
 
-    // Handle login
+    // Handle user's login
     $("#loginForm").submit(function(e) {
         e.preventDefault();
         
@@ -76,6 +72,7 @@ $(document).ready(function() {
                 localStorage.setItem("access_token", response.access_token);
                 alert("Login successful!");
 
+		//Extract user's role from the user's access token
                 const tokenParts = response.access_token.split('.');
                 const payload = JSON.parse(atob(tokenParts[1])); // Decode the payload
             
@@ -92,7 +89,7 @@ $(document).ready(function() {
         });
     });
 
-    // Handle logout
+    // Handle user's logout from dashboard
     $("#logout").click(function() {
         $.ajax({
             url: "http://127.0.0.1:5000/api/auth/logout",
@@ -114,10 +111,11 @@ $(document).ready(function() {
 
 
 
- // Handle Job Posting
+ // Handle Employer's Job Posting
  $("#jobForm").submit(function(e) {
     e.preventDefault();
 
+    // Save job information
     let jobData = {
         job_title: $("#jobTitle").val(),
         description: $("#jobDescription").val(),
@@ -127,6 +125,7 @@ $(document).ready(function() {
         website_link: $("#website_link").val()
     };
 
+    // Send Job posting information to the database
     $.ajax({
         url: "http://127.0.0.1:5000/api/job/jobs",
         type: "POST",
@@ -143,7 +142,7 @@ $(document).ready(function() {
     });
 });
 
-// Fetch job listings
+// Fetch all job listings and show them in Jobseeker's dashboard
 $.ajax({
     url: "http://127.0.0.1:5000/api/job/jobs",  // API endpoint to fetch all jobs
     type: "GET",

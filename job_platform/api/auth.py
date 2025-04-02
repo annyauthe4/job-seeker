@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# The module sets up the routes in the flask app
+
 from flask import Blueprint, request, jsonify, abort, render_template
 from job_platform.models.engine.db_storage import DBStorage
 from job_platform.models.user import User
@@ -5,18 +8,22 @@ from job_platform.models.job_seeker import JobSeeker
 from job_platform.models.employer import Employer
 from job_platform.utils.security import hash_password, check_password
 from flask_jwt_extended import create_access_token
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from job_platform.models.blocked_token import BlockedToken
 
 auth_api = Blueprint('auth_api', __name__)
-storage = DBStorage()
+storage = DBStorage()  # Instance of the database storage
 storage.reload()
+
 
 @auth_api.route('/')
 def landing_page():
     """Site landing page."""
     return render_template('landing.html')
 
+
+# Set up sign up for Employers
 @auth_api.route('/signup/employer', methods=['POST'])
 def signupEmployer():
     """User signup method."""
@@ -24,7 +31,7 @@ def signupEmployer():
 
     if not data:
         return jsonify({"error": "Data was not given"})
-     # Validate required fields
+    # Validate required fields
     required_fields = ['full_name', 'email', 'password', 'company_name']
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing required fields"}), 400
@@ -54,6 +61,8 @@ def signupEmployer():
         "role": "employer"
     }), 201
 
+
+# Set up sign up for Job seekers
 @auth_api.route('/signup/jobseeker', methods=['POST'])
 def signupJobSeeker():
     """User signup method."""
@@ -61,7 +70,7 @@ def signupJobSeeker():
 
     if not data:
         return jsonify({"error": "Data was not given"})
-     # Validate required fields
+    # Validate required fields
     required_fields = ['full_name', 'email', 'password']
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing required fields"}), 400
@@ -89,6 +98,8 @@ def signupJobSeeker():
         "role": "jobseeker"
     }), 201
 
+
+# Set up login for all users
 @auth_api.route('/login', methods=['POST'])
 def login():
     """User login method."""
@@ -120,11 +131,15 @@ def login():
 
     return jsonify({"access_token": access_token}), 200
 
+
 @auth_api.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
+    """ When a user logs out of the application
+        the users current access token is stored
+    """
     jti = get_jwt()['jti']
-    blocked_token = BlockedToken(id=jti)
+    blocked_token = BlockedToken(id=jti)  # Blacklist token
 
     storage.new(blocked_token)
     storage.save()

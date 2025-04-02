@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# Set routes for job postings and fetching jobs
+
 from flask import Blueprint, request, jsonify, abort
 from job_platform.models.engine.db_storage import DBStorage
 from job_platform.models.job import Job
@@ -9,15 +11,21 @@ from job_platform.models.blocked_token import BlockedToken
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 job_api = Blueprint('job_api', __name__)
-storage = DBStorage()
+storage = DBStorage()  # Instance of database storage
 storage.reload()
 
+
 def check_blacklist():
+    """ Check database if current access token is present
+        is present in the database. If yes, then the user is logged out
+        User has to log in again to get a new access token
+    """
     jti = get_jwt()['jti']
     blacklist = storage.get(BlockedToken, jti)
 
     if blacklist:
         abort(401, description="Login token is expired")
+
 
 @job_api.route('/jobs', methods=['GET'])
 def get_jobs():
