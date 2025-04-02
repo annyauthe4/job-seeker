@@ -45,10 +45,17 @@ $(document).ready(function() {
             data: JSON.stringify(userData),
             success: function(response) {
                 alert(response.message);
-                window.location.href = "login.html";
+
+                // Redirect to the appropriate dashboard
+                if (userType === "employer") {
+                    window.location.href = "employer_dashboard.html";
+		} else {
+                    window.location.href = "job_dashboard.html";
+		}
             },
             error: function(xhr) {
-                alert(xhr.responseJSON.error);
+	        let errorMessage = xhr.responseJSON ? xhr.responseJSON.error : "Signup failed.";
+                alert(errorMessage);
             }
         });
     });
