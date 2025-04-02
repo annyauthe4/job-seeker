@@ -48,9 +48,9 @@ $(document).ready(function() {
 
                 // Redirect to the appropriate dashboard
                 if (userType === "employer") {
-                    window.location.href = "employer_dashboard.html";
+                    window.location.href = "https://annyauthe4.github.io/job-seeker/employer_dashboard.html";
 		} else {
-                    window.location.href = "job_dashboard.html";
+                    window.location.href = "https://annyauthe4.github.io/job-seeker/job_dashboard.html";
 		}
             },
             error: function(xhr) {
