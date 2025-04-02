@@ -49,7 +49,10 @@ def signupEmployer():
             )
     storage.new(employer)
     storage.save()
-    return jsonify({"message": "Employer signed up!"}), 201
+    return jsonify({
+        "message": "Employer signed up!",
+        "role": "employer"
+    }), 201
 
 @auth_api.route('/signup/jobseeker', methods=['POST'])
 def signupJobSeeker():
@@ -81,7 +84,10 @@ def signupJobSeeker():
             )
     storage.new(seeker)
     storage.save()
-    return jsonify({"message": "You are all signed up!"}), 201
+    return jsonify({
+        "message": "You are all signed up!",
+        "role": "jobseeker"
+    }), 201
 
 @auth_api.route('/login', methods=['POST'])
 def login():
